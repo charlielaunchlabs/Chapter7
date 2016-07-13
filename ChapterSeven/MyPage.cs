@@ -20,6 +20,7 @@ namespace ChapterSeven
 			listView.ItemTemplate = new DataTemplate(typeof(TextCell));
 			listView.ItemTemplate.SetBinding(TextCell.TextProperty, "Title");
 			listView.ItemTemplate.SetBinding(TextCell.DetailProperty, "Description");
+
 			listView.ItemTapped += async (sender, e) =>
 			{
 				Item item = (Item)e.Item;

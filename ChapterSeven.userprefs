@@ -1,13 +1,19 @@
 ﻿<Properties StartupItem="iOS/ChapterSeven.iOS.csproj">
   <MonoDevelop.Ide.Workbench ActiveDocument="ChapterSeven/ChapterSeven.cs">
     <Files>
-      <File FileName="ChapterSeven/packages.config" Line="1" Column="1" />
-      <File FileName="ChapterSeven/ChapterSeven.cs" Line="73" Column="6" />
+      <File FileName="ChapterSeven/ChapterSeven.cs" Line="135" Column="7" />
+      <File FileName="iOS/Main.cs" Line="16" Column="1" />
+      <File FileName="ChapterSeven/MyPage.cs" Line="18" Column="6" />
+      <File FileName="iOS/AppDelegate.cs" Line="8" Column="18" />
+      <File FileName="ChapterSeven/Second.cs" Line="79" Column="59" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <Breakpoint file="/Users/launchlabs/Projects/ChapterSeven/ChapterSeven/ChapterSeven.cs" line="125" column="1" />
+      <Breakpoint file="/Users/launchlabs/Projects/ChapterSeven/ChapterSeven/ChapterSeven.cs" line="146" column="1" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.ItemProperties.ChapterSeven.iOS PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.C3B3234B-BAE2-4A0E-8E64-FCE5772F4147" />

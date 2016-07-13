@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -9,23 +10,84 @@ using Xamarin.Forms;
 namespace ChapterSeven
 {
 
-	public class Role
+
+	public class CategoryList
+	{
+		public string id { get; set; }
+		public string name { get; set; }
+	}
+
+	public class Location
+	{
+		public string street { get; set; }
+		public string city { get; set; }
+		public string state { get; set; }
+		public string country { get; set; }
+		public string zip { get; set; }
+		public double latitude { get; set; }
+		public double longitude { get; set; }
+		public string located { get; set; }
+	}
+
+	public class Datum
 	{
 		public string category { get; set; }
+		public List<CategoryList> category_list { get; set; }
+		public Location location { get; set; }
+		public string name { get; set; }
+		public string id { get; set; }
 	}
+
+	public class Paging
+	{
+		public string next { get; set; }
+	}
+
+	public class RootObject
+	{
+		public List<Datum> data { get; set; }
+		public Paging paging { get; set; }
+	}
+
+	public class ListContent
+	{
+		public string Name { get; set; }
+		public string Locations { get; set; }
+		public string Category { get; set; }
+		public string ID { get; set; }
+	}
+
+
 
 	public class App : Application
 	{
-
-
 
 		Label ResultEditText = new Label();
 		Label ResultLabel = new Label();
 		Label wawa = new Label();
 		Entry lll = new Entry();
-		string xxx;
+		// xxx;
+		ListView list = new ListView()
+		{
+			ItemTemplate = new DataTemplate(() =>
+			{
+				var textCell = new TextCell();
+				textCell.SetBinding(TextCell.TextProperty, "Name");
+				textCell.SetBinding(TextCell.DetailProperty, "Category");
+				return textCell;
+			})
+		};
+		WebView web = new WebView()
+		{
 
+			Source = new UrlWebViewSource {Url= "http://www.facebook.com" },
+			HeightRequest = 1000,
+			WidthRequest = 1000
+		};
+
+		
 		Button xa = new Button();
+		ObservableCollection<ListContent> item = new ObservableCollection<ListContent>();
 
 
 		public async Task<string> DownloadHomepage(string q)
@@ -71,24 +133,25 @@ namespace ChapterSeven
 
 		async void watda(object sender, TextChangedEventArgs e)
 		{
+			
 			ResultLabel.Text = "loading...";
 
-
 			// await! control returns to the caller
-			var intResult = await DownloadHomepage(e.NewTextValue);
+			var Result = await DownloadHomepage(e.NewTextValue);
 
 			// when the Task<int> returns, the value is available and we can display on the UI
-			ResultLabel.Text = "Result: " + intResult;
+			//ResultLabel.Text = "Result: " + Result;
 
-			if (intResult == "Null")
+			if (Result == "Null")
 			{
-				
+				item.Clear();
 			}
 			else
 			{
-				List<Role> roles = new List<Role>();
+				
+				List<RootObject> roles = new List<RootObject>();
 
-				JsonTextReader reader = new JsonTextReader(new StringReader(intResult));
+				JsonTextReader reader = new JsonTextReader(new StringReader(Result));
 				reader.SupportMultipleContent = true;
 
 				while (true)
@@ -99,14 +162,22 @@ namespace ChapterSeven
 					}
 
 					JsonSerializer serializer = new JsonSerializer();
-					Role role = serializer.Deserialize<Role>(reader);
+					RootObject role = serializer.Deserialize<RootObject>(reader);
 
 					roles.Add(role);
-				}
 
-				foreach (Role role in roles)
+				}
+				item.Clear();
+				foreach (RootObject role in roles)
 				{
-					 xxx = role.category + " ";
+					
+					for (int i = 0; i < role.data.Count; i++)
+					{
+						item.Add(new ListContent() { Name = role.data[i].name, Category = role.data[i].category, Locations = role.data[i].location.city + "," + role.data[i].location.state, ID = role.data[i].id});
+						list.ItemsSource =  item;
+						list.BindingContext = item;
+					}
+
 				}
 			}
 
@@ -115,19 +186,24 @@ namespace ChapterSeven
 		public App()
 		{
 
-
-			xa.Text = xxx;
+			xa.Text = "ambot";
 
 			// The root page of your application
 			var content = new ContentPage
 			{
-				Title = xxx,
+				Title ="Title",
 				Content = new StackLayout
 				{
 					VerticalOptions = LayoutOptions.Center,
-					Children = {lll,wawa,
-						new ScrollView{Content=new StackLayout{BackgroundColor=Color.Lime,Children ={ResultLabel,ResultEditText}}
-						},xa
+					Children = 
+					{
+						new ScrollView{
+							Content=new StackLayout{
+								Children={
+									lll,wawa,list,xa,web,
+								}
+							}
+						}
 					}
 				}
 			};
@@ -139,7 +215,19 @@ namespace ChapterSeven
 
 			};
 			//xa.Clicked += HandleTouchUpInside;
+			list.ItemTapped += async (sender, e) =>
+			{
+				ListContent items = (ListContent)e.Item;
+				await content.DisplayAlert("Tapped", items.Name + " was selected.", "OK"); 
+				((ListView)sender).SelectedItem = null;
 
+				//web.Source = new UrlWebViewSource { Url="http://wwww.facebook.com/" + items.ID};
+				if (Device.OS != TargetPlatform.WinPhone)
+				{
+					Device.OpenUri(new Uri("http://wwww.facebook.com/" + items.ID));
+				}
+
+			};
 			MainPage = new NavigationPage(main);
 		}
 
